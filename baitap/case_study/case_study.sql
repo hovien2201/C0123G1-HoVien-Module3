@@ -20,11 +20,10 @@ CREATE TABLE bo_phan(
       PRIMARY KEY(ma_bo_phan)
 );
 CREATE TABLE nhan_vien(
-	  ma_nhan_vien INT,
+	  ma_nhan_vien INT PRIMARY KEY,
       ho_ten VARCHAR(45) NOT NULL,
-      PRIMARY KEY(ma_nhan_vien),
       ngay_sinh DATE NOT NULL,
-      so_cmnd VARCHAR(45) NOT NULL,
+      so_cmnd VARCHAR(45) NOT NULL UNIQUE,
       luong DOUBLE NOT NULL,
       so_dien_thoai VARCHAR(45) NOT NULL,
       email VARCHAR(45),
@@ -35,7 +34,7 @@ CREATE TABLE nhan_vien(
 );
 CREATE TABLE loai_khach(
 	  ma_loai_khach INT PRIMARY KEY,
-      ten_loai_khach VARCHAR(45)
+      ten_loai_khach VARCHAR(45) NOT NULL
 );
 CREATE TABLE khach_hang(
 	  ma_khach_hang INT PRIMARY KEY,
@@ -50,14 +49,14 @@ CREATE TABLE khach_hang(
 );
 CREATE TABLE dich_vu_di_kem(
 	  ma_dich_vu_di_kem INT PRIMARY KEY,
-      ten_dich_vu_di_kem VARCHAR(45),
+      ten_dich_vu_di_kem VARCHAR(45) NOT NULL,
       gia DOUBLE,
       don_vi VARCHAR(45),
       trang_thai VARCHAR(45)
 );
 CREATE TABLE loai_dich_vu(
 	  ma_loai_dich_vu INT PRIMARY KEY,
-      ten_loai_dich_vu VARCHAR(45)
+      ten_loai_dich_vu VARCHAR(45) NOT NULL
 );
 CREATE TABLE kieu_thue(
 	  ma_kieu_thue INT PRIMARY KEY,
@@ -90,7 +89,7 @@ CREATE TABLE hop_dong_chi_tiet(
 	  ma_hop_dong_chi_tiet INT PRIMARY KEY,
       ma_hop_dong INT,FOREIGN KEY(ma_hop_dong)REFERENCES hop_dong(ma_hop_dong),
       ma_dich_vu_di_kem INT,FOREIGN KEY(ma_dich_vu_di_kem)REFERENCES dich_vu_di_kem(ma_dich_vu_di_kem),
-      so_luong INT
+      so_luong INT NOT NULL
 );
 
 -- thêm dữ liệu task3
@@ -149,6 +148,7 @@ INSERT INTO hop_dong_chi_tiet VALUE(1,2,1,5),
 (6,1,3,3),
 (7,2,2,12);
 
+-- task 4
 -- 2.	Hiển thị thông tin của tất cả nhân viên có trong hệ thống có tên bắt đầu là một trong các ký tự “H”, “T” hoặc “K” và có tối đa 15 kí tự.
 SELECT * FROM nhan_vien WHERE ho_ten LIKE 'H%' OR ho_ten LIKE 'T%' OR ho_ten LIKE 'K%' AND length(ho_ten)<=15;
 
@@ -156,6 +156,22 @@ SELECT * FROM nhan_vien WHERE ho_ten LIKE 'H%' OR ho_ten LIKE 'T%' OR ho_ten LIK
 SELECT * FROM khach_hang WHERE ((YEAR(CURDATE()) - YEAR(ngay_sinh) BETWEEN 18 AND 50) AND dia_chi LIKE '%Đà Nẵng' OR dia_chi LIKE '%Quảng Trị');
 
 -- 4.	Đếm xem tương ứng với mỗi khách hàng đã từng đặt phòng bao nhiêu lần. Kết quả hiển thị được sắp xếp tăng dần theo số lần đặt phòng của khách hàng. Chỉ đếm những khách hàng nào có Tên loại khách hàng là “Diamond”.
--- SELECT * FROM khach_hang ORDER BY  WHERE ();
+SELECT kh.*,lk.ten_loai_khach, COUNT(kh.ma_khach_hang) AS tong_lan_dat FROM khach_hang AS kh 
+INNER JOIN loai_khach AS lk ON kh.ma_loai_khach = lk.ma_loai_khach 
+INNER JOIN hop_dong AS hd ON  kh.ma_khach_hang = hd.ma_khach_hang 
+WHERE  lk.ten_loai_khach = 'Diamond' 
+GROUP BY kh.ma_khach_hang ORDER BY tong_lan_dat;
+
+--  5.	Hiển thị ma_khach_hang, ho_ten, ten_loai_khach, ma_hop_dong, ten_dich_vu, ngay_lam_hop_dong, ngay_ket_thuc,
+--  tong_tien (Với tổng tiền được tính theo công thức như sau: Chi Phí Thuê + Số Lượng * Giá, với Số Lượng và Giá là từ bảng dich_vu_di_kem,
+--   hop_dong_chi_tiet) cho tất cả các khách hàng đã từng đặt phòng. (những khách hàng nào chưa từng đặt phòng cũng phải hiển thị ra).
+SELECT kh.ma_khach_hang,kh.ho_ten,lk.ten_loai_khach,hd.ma_hop_dong,dv.ten_dich_vu,hd.ngay_lam_hop_dong,hd.ngay_ket_thuc FROM khach_hang kh 
+LEFT JOIN hop_dong hd ON kh.ma_khach_hang=hd.ma_khach_hang
+LEFT JOIN loai_khach lk ON lk.ma_loai_khach=kh.ma_loai_khach
+LEFT JOIN dich_vu dv ON dv.ma_dich_vu=hd.ma_dich_vu
+LEFT JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu=dv.ma_loai_dich_vu
+LEFT JOIN hop_dong_chi_tiet hdct ON hdct.ma_hop_dong=hd.ma_hop_dong
+LEFT JOIN dich_vu_di_kem dvdk ON dvdk.ma_dich_vu_di_kem=hdct.ma_dich_vu_di_kem;
+
 
 -- DROP DATABASE furama;
