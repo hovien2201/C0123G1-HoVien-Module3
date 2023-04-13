@@ -1,5 +1,7 @@
 CREATE DATABASE furama;
 USE furama;
+
+-- task 1,2
 CREATE TABLE vi_tri(
       ma_vi_tri INT AUTO_INCREMENT,
       ten_vi_tri VARCHAR(45),
@@ -7,67 +9,44 @@ CREATE TABLE vi_tri(
 );
 INSERT INTO vi_tri(ma_vi_tri,ten_vi_tri) VALUE(1,"thang");
 DELETE FROM vi_tri WHERE ma_vi_tri =1;
-SELECT * FROM vi_tri;
--- drop database furama; 
 CREATE TABLE trinh_do(
 	  ma_trinh_do INT,
       ten_trinh_do VARCHAR(45),
       PRIMARY KEY(ma_trinh_do)
 );
-SELECT * FROM trinh_do;
 CREATE TABLE bo_phan(
 	  ma_bo_phan INT,
       ten_bo_phan VARCHAR(45),
       PRIMARY KEY(ma_bo_phan)
 );
-SELECT * FROM bo_phan;
 CREATE TABLE nhan_vien(
 	  ma_nhan_vien INT,
-      ho_ten VARCHAR(45),
+      ho_ten VARCHAR(45) NOT NULL,
       PRIMARY KEY(ma_nhan_vien),
-      ngay_sinh DATE,
-      so_cmnd VARCHAR(45),
-      luong DOUBLE,
-      so_dien_thoai VARCHAR(45),
+      ngay_sinh DATE NOT NULL,
+      so_cmnd VARCHAR(45) NOT NULL,
+      luong DOUBLE NOT NULL,
+      so_dien_thoai VARCHAR(45) NOT NULL,
       email VARCHAR(45),
       dia_chi VARCHAR(45),
       ma_vi_tri INT,FOREIGN KEY(ma_vi_tri)REFERENCES vi_tri(ma_vi_tri),
       ma_trinh_do INT,FOREIGN KEY(ma_trinh_do)REFERENCES trinh_do(ma_trinh_do),
       ma_bo_phan INT,FOREIGN KEY(ma_bo_phan)REFERENCES bo_phan(ma_bo_phan)
 );
-SELECT * FROM nhan_vien;
 CREATE TABLE loai_khach(
 	  ma_loai_khach INT PRIMARY KEY,
       ten_loai_khach VARCHAR(45)
 );
-SELECT * FROM loai_khach;
 CREATE TABLE khach_hang(
 	  ma_khach_hang INT PRIMARY KEY,
       ma_loai_khach INT,FOREIGN KEY(ma_loai_khach)REFERENCES loai_khach(ma_loai_khach),
-      ho_ten VARCHAR(45),
-      ngay_sinh DATE,
-      gioi_tinh BIT(1),
-      so_cmnd VARCHAR(45),
-      so_dien_thoai VARCHAR(45),
+      ho_ten VARCHAR(45) NOT NULL,
+      ngay_sinh DATE NOT NULL,
+      gioi_tinh BIT(1) NOT NULL,
+      so_cmnd VARCHAR(45) NOT NULL,
+      so_dien_thoai VARCHAR(45) NOT NULL,
       email VARCHAR(45),
       dia_chi VARCHAR(45)
-);
-SELECT * FROM khach_hang;
-CREATE TABLE hop_dong(
-	  ma_hop_dong INT PRIMARY KEY,
-      ngay_lam_hop_dong DATETIME,
-      ngay_ket_thuc DATETIME,
-      tien_dat_coc DOUBLE,
-      ma_nhan_vien INT,FOREIGN KEY(ma_nhan_vien)REFERENCES nhan_vien(ma_nhan_vien),
-      ma_khach_hang INT ,FOREIGN KEY(ma_khach_hang)REFERENCES khach_hang(ma_khach_hang),
-      ma_dich_vu INT,FOREIGN KEY(ma_dich_vu)REFERENCES dich_vu(ma_dich_vu)
-);
-SELECT * FROM hop_dong;
-CREATE TABLE hop_dong_chi_tiet(
-	  ma_hop_dong_chi_tiet INT PRIMARY KEY,
-      ma_hop_dong INT,FOREIGN KEY(ma_hop_dong)REFERENCES hop_dong(ma_hop_dong),
-      ma_dich_vu_di_kem INT,FOREIGN KEY(ma_dich_vu_di_kem)REFERENCES dich_vu_di_kem(ma_dich_vu_di_kem),
-      so_luong INT
 );
 CREATE TABLE dich_vu_di_kem(
 	  ma_dich_vu_di_kem INT PRIMARY KEY,
@@ -86,9 +65,9 @@ CREATE TABLE kieu_thue(
 );
 CREATE TABLE dich_vu(
 	  ma_dich_vu INT PRIMARY KEY,
-      ten_dich_vu VARCHAR(45),
+      ten_dich_vu VARCHAR(45) NOT NULL,
       dien_tich INT,
-      chi_phi_thue DOUBLE,
+      chi_phi_thue DOUBLE NOT NULL,
       so_nguoi_toi_da INT,
       ma_kieu_thue INT,FOREIGN KEY(ma_kieu_thue)REFERENCES kieu_thue(ma_kieu_thue),
       ma_loai_dich_vu INT,FOREIGN KEY(ma_loai_dich_vu)REFERENCES loai_dich_vu(ma_loai_dich_vu),
@@ -98,7 +77,23 @@ CREATE TABLE dich_vu(
       so_tang INT,
       dich_vu_mien_phi_di_kem TEXT
 );
--- thêm dữ liệu 
+CREATE TABLE hop_dong(
+	  ma_hop_dong INT PRIMARY KEY,
+      ngay_lam_hop_dong DATETIME NOT NULL,
+      ngay_ket_thuc DATETIME NOT NULL,
+      tien_dat_coc DOUBLE NOT NULL,
+      ma_nhan_vien INT,FOREIGN KEY(ma_nhan_vien)REFERENCES nhan_vien(ma_nhan_vien),
+      ma_khach_hang INT ,FOREIGN KEY(ma_khach_hang)REFERENCES khach_hang(ma_khach_hang),
+      ma_dich_vu INT,FOREIGN KEY(ma_dich_vu)REFERENCES dich_vu(ma_dich_vu)
+);
+CREATE TABLE hop_dong_chi_tiet(
+	  ma_hop_dong_chi_tiet INT PRIMARY KEY,
+      ma_hop_dong INT,FOREIGN KEY(ma_hop_dong)REFERENCES hop_dong(ma_hop_dong),
+      ma_dich_vu_di_kem INT,FOREIGN KEY(ma_dich_vu_di_kem)REFERENCES dich_vu_di_kem(ma_dich_vu_di_kem),
+      so_luong INT
+);
+
+-- thêm dữ liệu task3
 INSERT INTO VI_Tri VALUE(1,"LỄ Tân"),(2,"PhỤC VỤ"),(3,"Chuyên VIÊN"),(4,"Giám sát"),(5,"Quản lí"),(6,"Giám đốc");
 INSERT INTO trinh_do VALUE(1,"TRUNg cấp"),(2,"CAO ĐẲng"),(3,"Đại HỌC"),(4,"Sau Đại HỌC");
 INSERT INTO BO_PHan VALUE(1,"Sale-MArkETING"),(2,"Hành ChíNH"),(3,"Phục Vụ"),(4,"QUẢN Lý");
@@ -124,3 +119,43 @@ INSERT INTO khach_hang VALUES
 (8,3,'Nguyễn Thị Hào','1999-04-08',0,'965656433','0763212345','haohao99@gmail.com','55 Nguyễn Văn Linh, Kon Tum'),
 (9,1,'Trần Đại Danh','1994-07-01',1,'432341235','0643343433','danhhai99@gmail.com','24 Lý Thường Kiệt, Quảng Ngãi'),
 (10,2,'Nguyễn Tâm Đắc','1989-07-01',1,'344343432','0987654321','dactam@gmail.com','22 Ngô Quyền, Đà Nẵng');
+INSERT INTO dich_vu_di_kem VALUE(1,"Karaoke",100000,"giờ",'tiện nghi,hiện đại'),
+(2,"thuê xe máy",10000,"chiếc",'tiện nghi,hiện đại'),
+(3,"thuê xe đạp",20000,"chiếc",'tiện nghi,hiện đại');
+INSERT INTO loai_dich_vu VALUE(1,"Villa"),(2,"HoUSE"),(3,"Room");
+INSERT INTO kieu_thue VALUE(1,"year"),(2,"month"),(3,"day"),(4,"hour");
+INSERT INTO dich_vu VALUES
+(1,'Villa Beach Front',25000,1000000,10,3,1,'vip','Có hồ bơi',500,4,null),
+(2,'HoUSE Princess 01',14000,5000000,7,2,2,'vip','Có thêm bếp nướng',null,3,null),
+(3,'Room Twin 01',5000,1000000,2,4,3,'nORmal','Có tivi',null,null,'1 Xe máy, 1 Xe đạp'),
+(4,'Villa No Beach Front',22000,9000000,8,3,1,'nORmal','Có hồ bơi',300,3,null),
+(5,'HoUSE Princess 02',10000,4000000,5,3,2,'nORmal','Có thêm bếp nướng',null,2,null),
+(6,'Room Twin 02',3000,900000,2,4,3,'nORmal','Có tivi',null,null,'1 Xe máy');
+INSERT INTO hop_dong VALUE(1,"2023-11-4","2023-11-6",0,3,1,3),
+(2,"2023-1-4","2023-1-6",200000,7,3,1),
+(3,"2023-6-4","2023-6-8",500000,3,4,2),
+(4,"2023-1-12","2023-1-16",1000000,7,5,5),
+(5,"2021-11-9","2021-11-14",0,7,2,6),
+(6,"2021-1-8","2021-1-12",600000,7,7,6),
+(7,"2023-12-6","2023-12-8",700000,7,4,4),
+(8,"2023-3-1","2023-3-2",1000000,3,4,1),
+(9,"2023-11-4","2023-11-8",300000,3,4,3),
+(10,"2022-11-6","2022-11-10",50000,10,3,5);
+INSERT INTO hop_dong_chi_tiet VALUE(1,2,1,5),
+(2,3,2,8),
+(3,2,3,7),
+(4,1,2,1),
+(5,3,2,12),
+(6,1,3,3),
+(7,2,2,12);
+
+-- 2.	Hiển thị thông tin của tất cả nhân viên có trong hệ thống có tên bắt đầu là một trong các ký tự “H”, “T” hoặc “K” và có tối đa 15 kí tự.
+SELECT * FROM nhan_vien WHERE ho_ten LIKE 'H%' OR ho_ten LIKE 'T%' OR ho_ten LIKE 'K%' AND length(ho_ten)<=15;
+
+-- 3.	Hiển thị thông tin của tất cả khách hàng có độ tuổi từ 18 đến 50 tuổi và có địa chỉ ở “Đà Nẵng” hoặc “Quảng Trị”.
+SELECT * FROM khach_hang WHERE ((YEAR(CURDATE()) - YEAR(ngay_sinh) BETWEEN 18 AND 50) AND dia_chi LIKE '%Đà Nẵng' OR dia_chi LIKE '%Quảng Trị');
+
+-- 4.	Đếm xem tương ứng với mỗi khách hàng đã từng đặt phòng bao nhiêu lần. Kết quả hiển thị được sắp xếp tăng dần theo số lần đặt phòng của khách hàng. Chỉ đếm những khách hàng nào có Tên loại khách hàng là “Diamond”.
+-- SELECT * FROM khach_hang ORDER BY  WHERE ();
+
+-- DROP DATABASE furama;
