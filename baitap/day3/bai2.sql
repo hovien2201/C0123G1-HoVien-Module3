@@ -92,10 +92,3 @@ FROM
   orders o 
   INNER JOIN orders_detail od ON o.orders_id = od.orders_id 
   INNER JOIN product p ON p.product_id = od.product_id;
-
-  
-  
-  
-  
-  
-  
