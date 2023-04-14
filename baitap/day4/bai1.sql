@@ -21,10 +21,7 @@ SELECT
   * 
 FROM 
   subjects s 
-ORDER BY 
-  s.credit DESC 
-LIMIT 
-  1;
+WHERE s.credit=( SELECT max(credit) FROM subjects);
   
 -- Hiển thị các thông tin môn học có điểm thi lớn nhất.
 SELECT 
