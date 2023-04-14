@@ -389,7 +389,7 @@ SELECT
   hd.ngay_lam_hop_dong, 
   hd.ngay_ket_thuc, 
   (
-    dv.chi_phi_thue + hdct.so_luong * dvdk.gia
+    dv.chi_phi_thue + ifnull(hdct.so_luong * dvdk.gia, 0)
   ) AS tong_tien 
 FROM 
   khach_hang kh 
@@ -399,6 +399,108 @@ FROM
   LEFT JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu 
   LEFT JOIN hop_dong_chi_tiet hdct ON hdct.ma_hop_dong = hd.ma_hop_dong 
   LEFT JOIN dich_vu_di_kem dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem;
+-- task 5
+-- 6.  Hiển thị ma_dich_vu, ten_dich_vu, dien_tich, 
+-- chi_phi_thue, ten_loai_dich_vu của tất cả các loại dịch vụ 
+-- chưa từng được khách hàng thực hiện đặt từ quý 1 của năm 2021 (Quý 1 là tháng 1, 2, 3).
+SELECT 
+  dv.ma_dich_vu, 
+  dv.ten_dich_vu, 
+  dv.dien_tich, 
+  dv.chi_phi_thue, 
+  ldv.ten_loai_dich_vu 
+FROM 
+  loai_dich_vu ldv 
+  INNER JOIN dich_vu dv ON dv.ma_loai_dich_vu = ldv.ma_loai_dich_vu 
+WHERE 
+  ldv.ten_loai_dich_vu NOT IN(
+    SELECT 
+      ldv.ten_loai_dich_vu 
+    FROM 
+      dich_vu dv 
+      INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu 
+      INNER JOIN khach_hang kh ON kh.ma_khach_hang = hd.ma_khach_hang 
+      INNER JOIN loai_dich_vu ldv 
+    WHERE 
+      ldv.ma_loai_dich_vu = (dv.ma_loai_dich_vu) 
+      AND YEAR(hd.ngay_lam_hop_dong)= '2021' 
+      AND MONTH(hd.ngay_lam_hop_dong)< 4
+  );
+-- 7.  Hiển thị thông tin ma_dich_vu, ten_dich_vu, dien_tich, so_nguoi_toi_da,
+--  chi_phi_thue, ten_loai_dich_vu của tất cả các loại dịch vụ đã từng được khách 
+--  hàng đặt phòng trong năm 2020 nhưng chưa từng được khách hàng đặt phòng trong năm 2021. dv,ldv,hd
+SELECT 
+  hd.ma_hop_dong, 
+  dv.ma_dich_vu, 
+  dv.ten_dich_vu, 
+  dv.dien_tich, 
+  dv.chi_phi_thue, 
+  ldv.ten_loai_dich_vu 
+FROM 
+  dich_vu dv 
+  INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu 
+  INNER JOIN khach_hang kh ON kh.ma_khach_hang = hd.ma_khach_hang 
+  INNER JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu 
+WHERE 
+  YEAR(hd.ngay_lam_hop_dong)= '2021' 
+  AND ldv.ten_loai_dich_vu NOT IN (
+    SELECT 
+      ldv.ten_loai_dich_vu 
+    FROM 
+      dich_vu dv 
+      INNER JOIN hop_dong hd ON hd.ma_dich_vu = dv.ma_dich_vu 
+      INNER JOIN khach_hang kh ON kh.ma_khach_hang = hd.ma_khach_hang 
+      INNER JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu 
+    WHERE 
+      YEAR(hd.ngay_lam_hop_dong)= '2022'
+  );
+-- 8.  Hiển thị thông tin ho_ten khách hàng có trong hệ thống, với yêu cầu ho_ten không trùng nhau.
+-- Học viên sử dụng theo 3 cách khác nhau để thực hiện yêu cầu trên.
+-- cach 1
+SELECT 
+  kh.ho_ten 
+FROM 
+  khach_hang kh 
+GROUP BY 
+  kh.ho_ten;
+-- cach2
+SELECT 
+  DISTINCT kh.ho_ten 
+FROM 
+  khach_hang kh;
+-- cach 3
+-- SELECT GROUP_CONCAT( kh.ma_khach_hang)
+-- FROM khach_hang kh
+-- GROUP BY kh.ho_ten;
+-- SELECT * FROM khach_hang kh WHERE kh.ma_khach_hang=(SELECT GROUP_CONCAT( kh.ma_khach_hang)
+-- FROM khach_hang kh
+-- GROUP BY kh.ho_ten);
+-- 9.  Thực hiện thống kê doanh thu theo tháng, nghĩa là tương ứng với mỗi tháng trong năm 2021 thì sẽ có bao nhiêu khách hàng thực hiện đặt phòng.
+SELECT 
+  kh.ma_khach_hang, 
+  kh.ho_ten, 
+  (
+    dv.chi_phi_thue + ifnull(hdct.so_luong * dvdk.gia, 0)
+  ) AS doanh_thu 
+FROM 
+  khach_hang kh 
+  LEFT JOIN hop_dong hd ON kh.ma_khach_hang = hd.ma_khach_hang 
+  LEFT JOIN loai_khach lk ON lk.ma_loai_khach = kh.ma_loai_khach 
+  LEFT JOIN dich_vu dv ON dv.ma_dich_vu = hd.ma_dich_vu 
+  LEFT JOIN loai_dich_vu ldv ON ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu 
+  LEFT JOIN hop_dong_chi_tiet hdct ON hdct.ma_hop_dong = hd.ma_hop_dong 
+  LEFT JOIN dich_vu_di_kem dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem 
+WHERE 
+  YEAR(hd.ngay_lam_hop_dong)= '2021' 
+  AND MONTH(hd.ngay_lam_hop_dong)>= 1;
+
+
+-- 10.	Hiển thị thông tin tương ứng với từng hợp đồng thì đã sử dụng bao nhiêu dịch vụ đi kèm.
+--  Kết quả hiển thị bao gồm ma_hop_dong, ngay_lam_hop_dong, ngay_ket_thuc, tien_dat_coc, 
+-- so_luong_dich_vu_di_kem (được tính dựa trên việc sum so_luong ở dich_vu_di_kem).
+
+
+
 
 
 -- DROP DATABASE furama;
