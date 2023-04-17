@@ -710,18 +710,27 @@ INNER JOIN dich_vu_di_kem dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_ke
 WHERE YEAR(hd.ngay_lam_hop_dong) = 2021 AND (dv.chi_phi_thue + hdct.so_luong * dvdk.gia) > 10000000  );
 
 -- 18.	Xóa những khách hàng có hợp đồng trước năm 2021 (chú ý ràng buộc giữa các bảng).
+
 CREATE VIEW view_khach_hang AS (
-SELECT kh.* FROM  khach_hang kh
+SELECT kh.ma_khach_hang FROM  khach_hang kh
 INNER JOIN hop_dong hd ON kh.ma_khach_hang=hd.ma_khach_hang
 WHERE  YEAR(hd.ngay_lam_hop_dong) <2021
 GROUP BY kh.ma_khach_hang
 );
 SELECT * FROM view_khach_hang;
 DELETE FROM view_khach_hang WHERE ma_khach_hang =1;
+SET SQL_SAFE_UPDATES =0;
 
+DELETE FROM khach_hang WHERE ma_khach_hang IN(SELECT kh.ma_khach_hang FROM  khach_hang kh
+INNER JOIN hop_dong hd ON kh.ma_khach_hang=hd.ma_khach_hang
+WHERE  YEAR(hd.ngay_lam_hop_dong) <2021
+GROUP BY kh.ma_khach_hang);
 
-
-
+-- 20.	Hiển thị thông tin của tất cả các nhân viên và khách hàng có trong hệ thống, 
+-- thông tin hiển thị bao gồm id (ma_nhan_vien, ma_khach_hang), ho_ten, email, so_dien_thoai, ngay_sinh, dia_chi.
+SELECT ma_nhan_vien AS ma ,ho_ten,email,so_dien_thoai,ngay_sinh,dia_chi FROM nhan_vien 
+UNION
+SELECT ma_khach_hang,ho_ten,email,so_dien_thoai,ngay_sinh,dia_chi FROM khach_hang kh
 
 
 
