@@ -700,8 +700,6 @@ SELECT ma_nhan_vien FROM hop_dong hd WHERE YEAR(hd.ngay_lam_hop_dong )=2019 OR Y
 
 -- 17.	Cập nhật thông tin những khách hàng có ten_loai_khach từ Platinum lên Diamond,
 --  chỉ cập nhật những khách hàng đã từng đặt phòng với Tổng Tiền thanh toán trong năm 2021 là lớn hơn 10.000.000 VNĐ.
-SET SQL_SAFE_UPDATES =0;
-
 UPDATE khach_hang 
 SET ma_loai_khach = 1
 WHERE ma_loai_khach = 2 AND ma_khach_hang IN  (SELECT hd.ma_khach_hang
