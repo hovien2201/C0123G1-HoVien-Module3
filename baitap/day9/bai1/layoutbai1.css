@@ -3,7 +3,7 @@
 }
 
 .header {
-    background: rgb(71, 63, 63);
+    background: black;
     height: 10%;
     color: darkgray;
 }
@@ -19,12 +19,12 @@
 }
 
 .left {
-    background: beige;
+    background: #EEEEEE;
     padding-left: 50px;
 }
 
 .right {
-    background: beige;
+    background: #EEEEEE;
 }
 
 .center {
