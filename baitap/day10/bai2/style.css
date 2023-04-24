@@ -1,0 +1,44 @@
+.container,
+.container-md,
+.container-sm {
+    max-width: 100%;
+}
+
+.logo {
+    margin-left: 100px;
+}
+
+.nav-right {
+    margin-right: 20px;
+}
+
+.content {
+    width: 100%;
+    background-image: url(https://cdn-dynmedia-1.microsoft.com/is/image/microsoftcorp/Hero_FY24_Surface-homepage_169?scl=1);
+    background-size: 100%;
+    height: 100%;
+}
+
+.content-1 {
+    padding-left: 80px;
+    padding-top: 250px;
+    width: 30%;
+    padding-bottom: 150px;
+}
+
+.link-lap {
+    width: 90%;
+}
+
+.body-2 {
+    margin-top: 50px;
+    width: 100%;
+    margin-left: 80px;
+    margin-right: 80px;
+}
+
+.st-bd2 {
+    margin-left: 30px;
+    color: blue;
+    text-decoration: none;
+}
