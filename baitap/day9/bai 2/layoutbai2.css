@@ -7,16 +7,16 @@
 }
 
 .menu {
-    background-color: antiquewhite;
+    background-color: #EEEEEE;
     height: 30px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
 .header {
-    background: rgb(71, 63, 63);
+    background-color: #EEEEEE;
     height: 50px;
-    color: darkgray;
+    color: black;
     font-size: 30px;
 }
 
