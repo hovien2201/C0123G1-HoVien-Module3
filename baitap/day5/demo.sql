@@ -104,6 +104,7 @@ delimiter // CREATE PROCEDURE sp_product_add(
   product_status
 );
 END // delimiter;
+
 CALL sp_product_add(
   5, 5, 'xe dap', 1500000, 1, 'xe hu', 
   1
@@ -134,6 +135,7 @@ WHERE
 END // delimiter;
 SET 
   sql_safe_updates = 0;
+  
 CALL sp_product_update(
   3, 3, 'du thuyen', 100000000, 1, 'vip', 
   0
@@ -150,4 +152,4 @@ WHERE
   id = p_id;
 END // delimiter;
 CALL sp_product_delete(2);
-SELECT * FROM products;
+SELECT * FROM products where product_status=1 ;
