@@ -32,13 +32,30 @@
 
 .body-2 {
     margin-top: 50px;
-    width: 100%;
+    width: 90%;
     margin-left: 80px;
-    margin-right: 80px;
 }
 
 .st-bd2 {
     margin-left: 30px;
     color: blue;
     text-decoration: none;
+}
+
+.row-table {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.border-tablets {
+    border: ridge;
+    margin-top: 15px;
+    margin-right: 30px;
+    width: 45%;
+}
+
+.body-tablets {
+    margin-right: 0px;
+    margin-left: 0px;
 }
