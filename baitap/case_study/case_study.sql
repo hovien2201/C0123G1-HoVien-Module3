@@ -320,14 +320,15 @@ INSERT INTO hop_dong_chi_tiet VALUE(1, 2, 1, 5),
 -- task 4
 -- 2.  Hiển thị thông tin của tất cả nhân viên có trong hệ thống có tên bắt đầu là một trong các ký tự “H”, “T” hoặc “K” và có tối đa 15 kí tự.
 SELECT 
-  * 
+  * ,
+  char_length(ho_ten)
 FROM 
   nhan_vien 
 WHERE 
+  char_length(ho_ten) <= 15 AND
   ho_ten LIKE 'H%' 
   OR ho_ten LIKE 'T%' 
-  OR ho_ten LIKE 'K%' 
-  AND length(ho_ten)<= 15;
+  OR ho_ten LIKE 'K%' ;
 -- 3.  Hiển thị thông tin của tất cả khách hàng có độ tuổi từ 18 đến 50 tuổi và có địa chỉ ở “Đà Nẵng” hoặc “Quảng Trị”.
 SELECT 
   * 
@@ -370,7 +371,7 @@ SELECT
     dv.ten_dich_vu,
     hd.ngay_lam_hop_dong,
     hd.ngay_ket_thuc,
-    (dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0)) AS tong_tien
+    sum(ifnull(dv.chi_phi_thue + IFNULL(hdct.so_luong * dvdk.gia, 0),0)) AS tong_tien
 FROM
     khach_hang kh
         LEFT JOIN
@@ -384,7 +385,8 @@ FROM
         LEFT JOIN
     hop_dong_chi_tiet hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
         LEFT JOIN
-    dich_vu_di_kem dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem;
+    dich_vu_di_kem dvdk ON dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+    GROUP BY  kh.ma_khach_hang;
 -- task 5
 -- 6.  Hiển thị ma_dich_vu, ten_dich_vu, dien_tich, 
 -- chi_phi_thue, ten_loai_dich_vu của tất cả các loại dịch vụ 
@@ -394,6 +396,7 @@ SELECT
     dv.ten_dich_vu,
     dv.dien_tich,
     dv.chi_phi_thue,
+    
     ldv.ten_loai_dich_vu
 FROM
     loai_dich_vu ldv
@@ -494,6 +497,10 @@ GROUP BY hd.ngay_lam_hop_dong
 ORDER BY thang;
 
 
+SELECT monthname(hd.ngay_lam_hop_dong), COUNT(kh.ma_khach_hang) FROM khach_hang kh 
+INNER JOIN hop_dong hd ON hd.ma_khach_hang=kh.ma_khach_hang
+where YEAR(hd.ngay_lam_hop_dong) =2021 GROUP BY monthname(hd.ngay_lam_hop_dong)
+
 -- 10.	Hiển thị thông tin tương ứng với từng hợp đồng thì đã sử dụng bao nhiêu dịch vụ đi kèm.
 --  Kết quả hiển thị bao gồm ma_hop_dong, ngay_lam_hop_dong, ngay_ket_thuc, tien_dat_coc, 
 -- so_luong_dich_vu_di_kem (được tính dựa trên việc sum so_luong ở dich_vu_di_kem).
@@ -547,7 +554,7 @@ FROM
     nhan_vien nv ON nv.ma_nhan_vien = hd.ma_nhan_vien
         INNER JOIN
     dich_vu dv ON dv.ma_dich_vu = hd.ma_dich_vu
-        INNER JOIN
+        LEFT JOIN
     hop_dong_chi_tiet hdct ON hdct.ma_hop_dong = hd.ma_hop_dong
         INNER JOIN
     dich_vu_di_kem dvdk ON hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
@@ -688,7 +695,6 @@ GROUP BY dvdk.ma_dich_vu_di_kem
 HAVING SUM(hdct.so_luong)>10) AS tev_dv) ;
 SET SQL_SAFE_UPDATES =1;
 
-
 -- 20.	Hiển thị thông tin của tất cả các nhân viên và khách hàng có trong hệ thống, 
 -- thông tin hiển thị bao gồm id (ma_nhan_vien, ma_khach_hang), ho_ten, email, so_dien_thoai, ngay_sinh, dia_chi.
 SELECT ma_nhan_vien AS ma ,ho_ten,email,so_dien_thoai,ngay_sinh,dia_chi FROM nhan_vien 
@@ -696,4 +702,18 @@ UNION
 SELECT ma_khach_hang,ho_ten,email,so_dien_thoai,ngay_sinh,dia_chi FROM khach_hang kh;
 
 
+-- tash 21
+CREATE VIEW n_nhan_vien AS
+SELECT nv.* FROM nhan_vien nv 
+INNER JOIN hop_dong hd ON hd.ma_nhan_vien = nv.ma_nhan_vien
+WHERE hd.ngay_lam_hop_dong ='2019/12/12' AND nv.dia_chi LIKE '%Hải Châu%';
+SELECT * FROM n_nhan_vien;
 
+-- task 22
+-- 22.	Thông qua khung nhìn v_nhan_vien thực hiện cập nhật địa chỉ thành “Liên Chiểu” đối với tất cả các nhân viên được nhìn thấy bởi khung nhìn này.
+SET SQL_SAFE_UPDATES =0;
+
+UPDATE n_nhan_vien,nhan_vien
+SET  nhan_vien.dia_chi='Liên Chiểu'
+WHERE nhan_vien.ma_nhan_vien =n_nhan_vien.ma_nhan_vien;
+SET SQL_SAFE_UPDATES =1;
