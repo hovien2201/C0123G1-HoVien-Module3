@@ -20,15 +20,16 @@ public class ServletProduct extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String description = request.getParameter("Description");
         float price = Float.parseFloat(request.getParameter("Price"));
-        int discount_percent = Integer.parseInt(request.getParameter("Discount Percent"));
+        int discountPercent = Integer.parseInt(request.getParameter("Discount Percent"));
         float discount= (float) (price*discount_percent*0.01);
         float total =price-discount;
 
         PrintWriter writer=response.getWriter();
         writer.println("<html>");
-        writer.println("<h1>Description: "+description +"<br>");
+        writer.println("<h1>Product Discount Calculator</h1>");
+        writer.println("Description: "+description +"<br>");
         writer.println("Price: "+price+"<br>");
-        writer.println("Discount Percent: "+discount_percent+"<br>");
+        writer.println("Discount Percent: "+discount_percent+"%"+"<br>");
         writer.println("Discount: "+discount +"<br>");
         writer.println("Total: "+total);
         writer.println("</html>");
