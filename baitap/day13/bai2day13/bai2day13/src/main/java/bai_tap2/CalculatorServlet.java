@@ -38,8 +38,13 @@ public class CalculatorServlet extends HttpServlet {
                 writer.println(fistOperand + " * " + secondOperand + " = " + result);
                 break;
             case "division":
-                result = Calculator.division(fistOperand, secondOperand);
-                writer.println(fistOperand + " / " + secondOperand + " = " + result);
+                if (secondOperand != 0) {
+                    result = Calculator.division(fistOperand, secondOperand);
+                    writer.println(fistOperand + " / " + secondOperand + " = " + result);
+                }
+                else {
+                    writer.println("Không thể chia cho 0");
+                }
                 break;
         }
         writer.println("</h3>");
