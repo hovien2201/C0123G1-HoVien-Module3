@@ -44,18 +44,18 @@
         <legend>Calculator</legend>
         <br>
         <label>Fist operand:</label>
-        <input type="text" name="fist operand">
+        <input type="text" name="fist_operand">
         <br>
         <label>Operator:</label>
         <select name="calculation">
             <option value="addition">addition</option>
-            <option value="Subtraction">Subtraction</option>
+            <option value="subtraction">Subtraction</option>
             <option value="multiplication">multiplication</option>
             <option value="division">division</option>
         </select>
         <br>
         <label>Second operand:</label>
-        <input type="text" name="Second operand">
+        <input type="text" name="second_operand">
         <br>
         <button type="submit" value="calculate">Calculate</button>
     </fieldset>
