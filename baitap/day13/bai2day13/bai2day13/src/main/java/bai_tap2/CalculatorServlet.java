@@ -15,9 +15,9 @@ public class CalculatorServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        float fistOperand = Float.parseFloat(request.getParameter("fist operand"));
+        float fistOperand = Float.parseFloat(request.getParameter("fist_operand"));
         String calculation = request.getParameter("calculation");
-        float secondOperand = Float.parseFloat(request.getParameter("Second operand"));
+        float secondOperand = Float.parseFloat(request.getParameter("second_operand"));
 
         float result;
         PrintWriter writer = response.getWriter();
@@ -29,7 +29,7 @@ public class CalculatorServlet extends HttpServlet {
                 result = Calculator.addition(fistOperand, secondOperand);
                 writer.println(fistOperand + " + " + secondOperand + " = " + result);
                 break;
-            case "Subtraction":
+            case "subtraction":
                 result = Calculator.subtraction(fistOperand, secondOperand);
                 writer.println(fistOperand + " - " + secondOperand + " = " + result);
                 break;
