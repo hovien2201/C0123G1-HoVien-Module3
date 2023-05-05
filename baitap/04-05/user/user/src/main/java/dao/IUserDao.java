@@ -18,4 +18,5 @@ public interface IUserDao {
 
     public List<User> selectUsersSearch(String country);
     public List<User> sortByName();
+    public String transaction(User user);
 }

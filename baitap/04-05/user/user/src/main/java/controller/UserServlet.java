@@ -30,6 +30,9 @@ public class UserServlet extends HttpServlet {
                 case "create":
                     insertUser(request, response);
                     break;
+                case "transaction":
+                    insertUserTransaction(request, response);
+                    break;
                 case "edit":
                     updateUser(request, response);
                     break;
@@ -54,6 +57,9 @@ public class UserServlet extends HttpServlet {
                 case "create":
                     showNewForm(request, response);
                     break;
+                case "transaction":
+                    transactionUser(request, response);
+                    break;
                 case "edit":
                     showEditForm(request, response);
                     break;
@@ -73,6 +79,11 @@ public class UserServlet extends HttpServlet {
         } catch (SQLException ex) {
             throw new ServletException(ex);
         }
+    }
+
+    private void transactionUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("transaction.jsp");
+        dispatcher.forward(request, response);
     }
 
     private void sortByName(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -122,6 +133,16 @@ public class UserServlet extends HttpServlet {
         User newUser = new User(name, email, country);
         userDAO.insertUser(newUser);
         RequestDispatcher dispatcher = request.getRequestDispatcher("create.jsp");
+        dispatcher.forward(request, response);
+    }
+    private void insertUserTransaction(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, IOException, ServletException {
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String country = request.getParameter("country");
+        User newUser = new User(name, email, country);
+        userDAO.transaction(newUser);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("transaction.jsp");
         dispatcher.forward(request, response);
     }
 

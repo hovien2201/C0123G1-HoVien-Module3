@@ -18,6 +18,10 @@ public class UserDao implements IUserDao {
     private static final String UPDATE_USERS_SQL = "update users set name = ?,email= ?, country =? where id = ?;";
     private static final String SELECT_SEARCH_COUNTRY = "SELECT * FROM users WHERE country LIKE ?;";
     private static final String SORT_BY_NAME = "SELECT * FROM users ORDER BY name;";
+    private static final String DELETE_BY_ID_SP = "CALL delete_by_id(?);";
+    private static final String UPDATE_USER_SP = "CALL update_user(?,?,?,?);";
+    private static final String SELECT_USER_SP = "CALL select_user;";
+
 
     public UserDao() {
     }
@@ -83,10 +87,10 @@ public class UserDao implements IUserDao {
         try (Connection connection = getConnection();
 
              // Step 2:Create a statement using connection object
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);) {
-            System.out.println(preparedStatement);
+             CallableStatement callableStatement = connection.prepareCall(SELECT_USER_SP);) {
+            System.out.println(callableStatement);
             // Step 3: Execute the query or update query
-            ResultSet rs = preparedStatement.executeQuery();
+            ResultSet rs = callableStatement.executeQuery();
 
             // Step 4: Process the ResultSet object.
             while (rs.next()) {
@@ -104,7 +108,7 @@ public class UserDao implements IUserDao {
 
     public boolean deleteUser(int id) throws SQLException {
         boolean rowDeleted;
-        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(DELETE_USERS_SQL);) {
+        try (Connection connection = getConnection(); CallableStatement statement = connection.prepareCall(DELETE_BY_ID_SP);) {
             statement.setInt(1, id);
             rowDeleted = statement.executeUpdate() > 0;
         }
@@ -113,11 +117,12 @@ public class UserDao implements IUserDao {
 
     public boolean updateUser(User user) throws SQLException {
         boolean rowUpdated;
-        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(UPDATE_USERS_SQL);) {
-            statement.setString(1, user.getName());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, user.getCountry());
-            statement.setInt(4, user.getId());
+        try (Connection connection = getConnection(); CallableStatement statement = connection.prepareCall(UPDATE_USER_SP);) {
+            statement.setInt(1, user.getId());
+            statement.setString(2, user.getName());
+            statement.setString(3, user.getEmail());
+            statement.setString(4, user.getCountry());
+
 
             rowUpdated = statement.executeUpdate() > 0;
         }
@@ -169,6 +174,38 @@ public class UserDao implements IUserDao {
             printSQLException(e);
         }
         return users;
+    }
+
+    @Override
+    public String transaction(User user) {
+        String msg = "OK, transaction successfully!";
+        Connection connection = getConnection();
+        Savepoint savepoint1= null;
+        Savepoint savepoint2= null;
+        try {
+            connection.setAutoCommit(false);
+            PreparedStatement preparedStatement =connection.prepareStatement(INSERT_USERS_SQL);
+            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(2, user.getEmail());
+            preparedStatement.setString(3, user.getCountry());
+            System.out.println(preparedStatement);
+            int rowAffect= preparedStatement.executeUpdate();
+            if (rowAffect >0) {
+                connection.commit();
+            } else {
+                msg = "rollback try";
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            msg = "rollback catch";
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            throw new RuntimeException(e);
+        }
+        return msg;
     }
 
 
