@@ -18,7 +18,7 @@
     <a href="/users?action=create">Add New User</a>
   </h2>
   <h2>
-    <a href="/users?action=transaction">Add New User In Transaction</a>
+    <a href="/users?action=transac">Add New User In Transaction</a>
   </h2>
   <form action="/users?action=search" method="post">
     <input type="text" name="country" placeholder="Tìm kiếm theo quốc gia">

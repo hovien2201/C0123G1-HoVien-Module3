@@ -40,8 +40,8 @@ public class UserDao implements IUserDao {
         }
         return connection;
     }
-
-    public void insertUser(User user) throws SQLException {
+@Override
+    public void insertUser(model.User user) throws SQLException {
         System.out.println(INSERT_USERS_SQL);
         // try-with-resource statement will auto close the connection.
         try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USERS_SQL)) {
@@ -177,11 +177,9 @@ public class UserDao implements IUserDao {
     }
 
     @Override
-    public String transaction(User user) {
+    public String createByTransaction(User user) {
         String msg = "OK, transaction successfully!";
         Connection connection = getConnection();
-        Savepoint savepoint1= null;
-        Savepoint savepoint2= null;
         try {
             connection.setAutoCommit(false);
             PreparedStatement preparedStatement =connection.prepareStatement(INSERT_USERS_SQL);
@@ -207,6 +205,7 @@ public class UserDao implements IUserDao {
         }
         return msg;
     }
+
 
 
     private void printSQLException(SQLException ex) {
